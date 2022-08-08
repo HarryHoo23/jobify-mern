@@ -1,3 +1,5 @@
+import 'express-async-errors';
+import morgan from 'morgan';
 import express from 'express';
 import notFoundMiddleware from './middleware/not-found.js';
 import errorHandlerMiddleWare from './middleware/error-handler.js';
@@ -13,12 +15,19 @@ dotenv.config();
 
 // routers
 
+if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'));
+}
 
 // middleware
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('Welcome!');
+    res.json({ msg: 'Welcome!' });
+})
+
+app.get('/api/v1', (req, res) => {
+    res.json({ msg: 'API!' });
 })
 
 app.use('/api/v1/auth', authRouter);
@@ -28,7 +37,6 @@ app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleWare);
 
 const port = process.env.PORT || 5001
-
 
 const start = async () => {
     try {
